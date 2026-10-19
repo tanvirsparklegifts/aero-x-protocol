@@ -1,35 +1,37 @@
+
 syntax = "proto3";
 
-package aerox.telemetry.v1;
+package aero.v1;
 
-enum VehicleType {
-  VEHICLE_TYPE_UNSPECIFIED = 0;
-  VEHICLE_TYPE_COMMERCIAL_AIRCRAFT = 1;
-  VEHICLE_TYPE_HELICOPTER = 2;
-  VEHICLE_TYPE_HIGH_SPEED_TRAIN = 3;
-  VEHICLE_TYPE_ORBITAL_ROCKET = 4;
+option go_package = "aero-x-protocol/proto/v1;aerov1";
+
+// QoS Priority Levels for Telemetry & Command Routing
+enum QoSPriority {
+  QOS_UNSPECIFIED = 0;
+  QOS_BEST_EFFORT = 1;
+  QOS_RELIABLE = 2;
+  QOS_MISSION_CRITICAL = 3;
 }
 
-message Vector3D {
-  double x = 1;
-  double y = 2;
-  double z = 3;
+// TelemetryPacket defines the structured message payload for Nexus Data Fabric
+message TelemetryPacket {
+  string agent_id = 1;
+  double latitude = 2;
+  double longitude = 3;
+  double altitude = 4;
+  double velocity = 5;
+  int64 timestamp_epoch_ms = 6;
+  QoSPriority priority = 7;
 }
 
-message VehicleState {
-  string vehicle_id = 1;
-  VehicleType type = 2;
-  Vector3D position = 3;
-  Vector3D velocity = 4;
-  Vector3D acceleration = 5;
-  double fuel_or_battery_level = 6;
-  uint64 timestamp_utc_ms = 7;
+// HeartbeatResponse returns swarm synchronization feedback
+message HeartbeatResponse {
+  bool acknowledged = 1;
+  int64 server_timestamp_epoch_ms = 2;
+  string swarm_status = 3;
 }
 
-message AgentOrchestrationCommand {
-  string source_agent_id = 1;
-  string target_vehicle_id = 2;
-  Vector3D trajectory_adjustment = 3;
-  bool emergency_override = 4;
-  string rationale = 5;
+// NexusTransportService defines high-throughput gRPC communication contract
+service NexusTransportService {
+  rpc StreamTelemetry (stream TelemetryPacket) returns (HeartbeatResponse);
 }
