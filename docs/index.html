@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AERO-X Protocol — Digital Twin Telemetry & Swarm Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #111827;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-red: #ef4444;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #1f2937;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        .title-group h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
+        .title-group p {
+            margin: 4px 0 0 0;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--accent-green);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 1rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .metric-label {
+            color: var(--text-muted);
+        }
+
+        .metric-value {
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .agent-status-active {
+            color: var(--accent-green);
+        }
+
+        .agent-status-critical {
+            color: var(--accent-red);
+        }
+
+        .log-box {
+            background-color: #030712;
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            height: 180px;
+            overflow-y: auto;
+            color: #38bdf8;
+        }
+
+        .log-entry {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="title-group">
+            <h1>AERO-X PROTOCOL // DIGITAL TWIN MONITOR</h1>
+            <p>Layer 04 Runtime Telemetry & Bounded-Latency Swarm Observer</p>
+        </div>
+        <div class="status-badge">● SWARM ACTIVE</div>
+    </header>
+
+    <div class="grid-container">
+        <!-- Agent Alpha Card -->
+        <div class="card">
+            <h2>Node: AERO-AGENT-01-ALPHA</h2>
+            <div class="metric-group">
+                <span class="metric-label">Status:</span>
+                <span class="metric-value agent-status-active">ONLINE (0ms Drop)</span>
+            </div>
+            <div class="metric-group">
+                <span class="metric-label">Latitude/Longitude:</span>
+                <span class="metric-value" id="alpha-coords">23.8103, 90.4125</span>
+            </div>
+            <div class="metric-group">
+                <span class="metric-label">Altitude:</span>
+                <span class="metric-value" id="alpha-alt">1200.5 m</span>
+            </div>
+            <div class="metric-group">
+                <span class="metric-label">Transport QoS:</span>
+                <span class="metric-value" style="color: #f59e0b;">Mission Critical</span>
+            </div>
+        </div>
+
+        <!-- Agent Beta Card -->
+        <div class="card">
+            <h2>Node: AERO-AGENT-02-BETA</h2>
+            <div class="metric-group">
+                <span class="metric-label">Status:</span>
+                <span class="metric-value agent-status-active" id="beta-status">ONLINE</span>
+            </div>
+            <div class="metric-group">
+                <span class="metric-label">Latitude/Longitude:</span>
+                <span class="metric-value" id="beta-coords">23.8150, 90.4180</span>
+            </div>
+            <div class="metric-group">
+                <span class="metric-label">Altitude:</span>
+                <span class="metric-value" id="beta-alt">1210.0 m</span>
+            </div>
+            <div class="metric-group">
+                <span class="metric-label">Transport QoS:</span>
+                <span class="metric-value" style="color: #3b82f6;">Best Effort</span>
+            </div>
+        </div>
+
+        <!-- Nexus Transport Metrics -->
+        <div class="card">
+            <h2>Nexus Fabric QoS Stream</h2>
+            <div class="metric-group">
+                <span class="metric-label">Active Protocol:</span>
+                <span class="metric-value">gRPC / Protobuf v1</span>
+            </div>
+            <div class="metric-group">
+                <span class="metric-label">Telemetry Latency:</span>
+                <span class="metric-value" style="color: var(--accent-green);">&lt; 1.2 ms</span>
+            </div>
+            <div class="metric-group">
+                <span class="metric-label">Swarm Failover Budget:</span>
+                <span class="metric-value">1500 ms</span>
+            </div>
+            <div class="metric-group">
+                <span class="metric-label">Orchestration State:</span>
+                <span class="metric-value">BOUNDED_OK</span>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="card">
+        <h2>Live Swarm Orchestration Logs</h2>
+        <div class="log-box" id="log-box">
+            <div class="log-entry">[SYSTEM] AERO-X Protocol Digital Twin Dashboard initialized.</div>
+            <div class="log-entry">[NEXUS] Synchronized Protobuf telemetry channels.</div>
+            <div class="log-entry">[SWARM] Node heartbeat monitoring active across 2 registered agents.</div>
+        </div>
+    </div>
+
+    <script>
+        const logBox = document.getElementById('log-box');
+        const alphaAlt = document.getElementById('alpha-alt');
+        const betaAlt = document.getElementById('beta-alt');
+
+        let tick = 0;
+
+        function addLog(msg) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const timestamp = new Date().toISOString().split('T')[1].slice(0, 8);
+            entry.textContent = `[${timestamp}] ${msg}`;
+            logBox.appendChild(entry);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        // Live Simulation Logic
+        setInterval(() => {
+            tick++;
+            
+            // Fluctuate telemetry
+            let newAlphaAlt = (1200.5 + Math.sin(tick) * 2).toFixed(1);
+            let newBetaAlt = (1210.0 + Math.cos(tick) * 2.5).toFixed(1);
+
+            alphaAlt.textContent = `${newAlphaAlt} m`;
+            betaAlt.textContent = `${newBetaAlt} m`;
+
+            if (tick % 3 === 0) {
+                addLog(`[NEXUS] Dispatched Critical QoS Packet from AERO-AGENT-01-ALPHA`);
+            }
+        }, 1500);
+    </script>
+
+</body>
+</html>
