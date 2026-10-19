@@ -1,38 +1,68 @@
-# ARCHITECT.md — AERO-X System Architecture
+# AERO-X Protocol
 
-## Overview
-AERO-X is a zero-latency Agentic Autonomy Engine operating on top of T.M.T Protocol for multi-vehicle aerospace, high-speed transit, and orbital spacecraft synchronization.
+Autonomous Aerospace & Multi-Vehicle Orchestration Engine
 
----
+System Architecture | Multi-Agent Coordination | Real-Time Distributed Systems | Digital Twin Infrastructure
 
-## 1. System Topology & Core Layers
+AERO-X Protocol is a proposed distributed autonomy architecture designed to coordinate multiple aerospace platforms and autonomous vehicles through a unified perception, decision, communication, and simulation framework.
 
-### Layer 1: Edge-Native Perception & Physics-Informed Neural Networks (PINNs)
-- **On-Board Processing:** Hardware-accelerated NPU and TPU clusters operating locally on the edge, ensuring zero cloud dependency for deterministic real-time control.
-- **Physics Integration:** Embedded domain-specific models encoding aerodynamics, fluid dynamics, gravitational anomalies, and atmospheric thermodynamics directly into real-time inference loops.
-- **Sensor Fusion:** Sub-millisecond temporal synchronization across heterogeneous sensor arrays, including LiDAR, RADAR, Quantum Gyroscopes, Optical Cameras, and Satellite Telemetry.
+The architecture combines edge-native intelligence, multi-agent orchestration, deterministic communication, and digital twin synchronization to enable coordinated operations across heterogeneous vehicle fleets.
 
-### Layer 2: T.M.T Protocol Multi-Agent Orchestration
-- **Vehicle-to-Vehicle (V2V) Mesh:** Ultra-low-latency direct peer-to-peer agent communication topology established across contiguous dynamic vehicles.
-- **Decentralized Air Traffic Control (ATC):** Autonomous dynamic route negotiation and conflict resolution without relying on a centralized single point of failure.
-- **Asynchronous Fault Tolerance:** Robust Byzantine fault tolerance algorithms designed to detect, isolate, and mitigate malicious, noisy, or corrupted telemetry nodes.
+The central design principle is to distribute intelligence to the edge while maintaining a globally coordinated, observable, and safety-constrained system.
 
-### Layer 3: Dynamic Trajectory & Predictive Emergency Engine
-- **Predictive Braking & Vectoring:** Microsecond-level active adjustments for thrust vectoring in orbital rockets and electromagnetic levitation control in hyperloop systems.
-- **Obstacle & Weather Avoidance:** Continuous proactive trajectory recalculation to navigate dynamic physical hazards and severe weather events for fixed-wing and rotary-wing aircraft.
+> Architectural objective: Achieve bounded-latency coordination, resilient multi-agent operations, synchronized digital twins, and safe degradation under network or subsystem failures.
 
-### Layer 4: Real-Time Digital Twin & Continuous Simulation
-- **Synthetic Environment:** High-fidelity parallel digital twin executing continuous reinforcement learning (RL) feedback loops to evaluate and pre-solve extreme edge cases prior to physical actuation.
+Important engineering distinction: Absolute zero-latency communication is physically impossible. AERO-X should instead target measurable end-to-end latency budgets, deterministic scheduling where feasible, and local decision-making that does not depend on a remote connection.
 
 ---
 
-## 2. Implementation & Deployment Strategy
+## 1. Core System Architecture
 
-| Metric / Domain | Implementation Details | Target Benchmark |
-| :--- | :--- | :--- |
-| **Open-Source Core** | Architecture specification, protocol buffers, and modular reference implementations (`ARCHITECT.md`, `proto/`, `docs/`). | Public Release / Apache 2.0 |
-| **Interactive Interface** | Live web-based visualization dashboard and dynamic telemetry playground integrated into the primary portfolio hub. | < 16ms Frame Latency |
-| **Industry Deployment** | Demonstrating protocol architecture for enterprise integration, global deep-tech recruiters, and venture partners. | Production Readiness |
+AERO-X consists of four primary architectural layers.
+
+### Layer 01 — Edge-Native Perception & Vehicle Intelligence
+- **Designation:** AERO-X / EDGE
+- **Primary responsibility:** Convert raw sensor observations into reliable, time-stamped representations of the vehicle's local environment. This layer operates directly on individual vehicles or at nearby edge-computing nodes.
+- **Core components:** Sensor Abstraction Layer, Perception Engine, State Estimation, Local Context Engine, Edge Inference Runtime, and Health Monitor.
+- **Operational constraint:** Local safety functions must remain available when cloud connectivity is lost. Each vehicle should maintain its own authoritative local state.
+
+### Layer 02 — Multi-Agent Intelligence & Orchestration
+- **Designation:** AERO-X / SWARM CORE
+- **Primary responsibility:** Coordinate independent agents through shared objectives, state exchange, task allocation, and conflict resolution without requiring every decision to pass through one central controller.
+- **Core components:** Agent Runtime, Coordination Engine, Distributed State Registry, Policy & Constraint Engine, and Fault-Tolerant Supervisor.
+- **Distributed coordination model:** AERO-X uses a hybrid hierarchical and distributed architecture, balancing onboard safety controllers with distributed coordination services.
+
+### Layer 03 — Deterministic Communication & Data Fabric
+- **Designation:** AERO-X / NEXUS FABRIC
+- **Primary responsibility:** Transport commands, observations, health events, and coordination metadata across heterogeneous network environments.
+- **Core components:** Communication Gateway, Message Broker, State Synchronization Service, Time Synchronization Service, QoS Scheduler, Network Health Monitor, and Security Gateway.
+- **Technologies Supported:** DDS, TSN, QUIC, gRPC, Protobuf, and NTP/PTP.
+- **The zero-latency problem:** Treats latency as a measurable service-level objective (SLO) targeting bounded end-to-end latency budgets rather than impossible absolute zero-latency.
+
+### Layer 04 — Digital Twin & Simulation Intelligence
+- **Designation:** AERO-X / DIGITAL REALITY
+- **Primary responsibility:** Maintain a synchronized computational representation of vehicles, infrastructure, environmental conditions, and system behavior to support scenario evaluation, verification, and testing.
+- **Core components:** Digital Twin Registry, State Replication Engine, Simulation Runtime, Scenario Orchestrator, Model Validation Engine, and Replay & Observability Engine.
+- **Operating modes:** Offline Simulation, Software-in-the-Loop (SIL), Hardware-in-the-Loop (HIL), Shadow Mode, and Supervised Integration Testing.
 
 ---
-*Author: MD Tanvir Ahammed (Lead AI Systems Architect)*
+
+## 2. Safety, Reliability & Security Plane
+
+Safety and security span all four layers:
+- **Safety controls:** Local safety enforcement independent of cloud connectivity, explicit operating envelopes, watchdogs, and defined degraded operating modes.
+- **Reliability:** Idempotent event handling, sequence numbers, versioned schemas, bounded queues, and recovery mechanisms from network partitions.
+- **Security:** Mutual authentication between services, least-privilege authorization, encryption in transit, signed software artifacts, and tamper-evident audit logging.
+
+---
+
+## 3. Implementation Roadmap
+
+- **Phase 1 — Architecture Foundation:** Interface contracts, system boundaries, and threat model.
+- **Phase 2 — Edge Prototype:** Sensor adapters, state estimation, and local health monitoring.
+- **Phase 3 — Agent Framework:** Agent lifecycle, shared state, and task ownership.
+- **Phase 4 — Communication Fabric:** Message routing, QoS, and time synchronization.
+- **Phase 5 — Digital Twin:** Entity models and telemetry synchronization.
+- **Phase 6 — Integrated Verification:** End-to-end simulation, HIL, and failure injection.
+- **Phase 7 — Controlled Pilot:** Supervised operation in permitted test environments.
+
