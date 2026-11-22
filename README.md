@@ -1,34 +1,40 @@
 # AERO-X Protocol
 
-**Autonomous Aerospace & Multi-Vehicle Orchestration Engine**
-*System Architecture | Multi-Agent Coordination | Real-Time Distributed Systems | Digital Twin Infrastructure*
+**Autonomous Aerospace & Multi-Vehicle Orchestration Engine — architecture prototype**
 
-AERO-X Protocol is a distributed autonomy architecture designed to coordinate multiple aerospace platforms and autonomous vehicles through a unified perception, decision, communication, and simulation framework.
+AERO-X is an exploratory Go simulation of three cooperating software components: edge telemetry state, a heartbeat-based agent registry, and a priority-aware in-memory message queue. It is not flight-control software and has not been validated for real aerospace or safety-critical deployment.
 
----
+## Current implementation
 
-## 🏗️ Core Architectural Layers
+- pkg/edge: mutex-protected telemetry state and snapshot reads.
+- pkg/swarm: in-memory agent registration, heartbeat timestamps, stale-agent pruning, and task-routing checks.
+- pkg/pkg/nexus: in-memory queues that process MissionCritical/Reliable packets before BestEffort packets.
+- cmd/agent: a short local simulation wiring the components together.
 
-### Layer 01 — Edge-Native Perception (`pkg/edge`)
-* **Designation:** AERO-X / EDGE
-* **Functionality:** Converts raw sensor telemetry into structured, time-stamped edge state vectors. Runs directly on onboard micro-nodes with minimal resource overhead.
+## Requirements
 
-### Layer 02 — Swarm Core Orchestration (`pkg/swarm`)
-* **Designation:** AERO-X / SWARM
-* **Functionality:** Handles bounded-latency task routing, cluster registry management, and autonomous node failover. Tracks heartbeat freshness and dynamic mission re-allocation when an edge agent drops offline.
+- Go 1.22+
 
-### Layer 03 — Nexus Data Fabric (`pkg/nexus` & `proto/telemetry.proto`)
-* **Designation:** AERO-X / NEXUS
-* **Functionality:** Provides a QoS-prioritized messaging transport layer. Automatically segregates and dispatches `MissionCritical` vs `BestEffort` telemetry packets over structured protobuf specifications.
+## Run locally
 
----
+    go test ./...
+    go run ./cmd/agent
 
-## 🚀 Go Execution Runtime Simulation
+## Repository layout
 
-The engine features a fully integrated runtime in `cmd/agent/main.go` simulating edge telemetry ingestion, heartbeat monitoring, network failure recovery, and QoS packet transport.
+    cmd/agent/             simulation entry point
+    pkg/edge/              telemetry state
+    pkg/swarm/             agent registry and heartbeat handling
+    pkg/pkg/nexus/         in-memory priority queue
+    proto/telemetry.proto  protocol schema draft
+    docs/                  architecture assets
 
-### Running the Orchestration Simulation
-```bash
-go run cmd/agent/main.go
+## Scope and limitations
 
+This repository currently demonstrates an in-process simulation. It does not implement real aircraft interfaces, distributed networking, protobuf code generation, durable messaging, real-time guarantees, or flight-certified safety controls. The queue is in-memory and the latency values printed by the demo are observations from a local simulation, not a verified latency SLO.
 
+## Engineering workflow
+
+Pull requests should include focused tests and explain behavior changes. The GitHub Actions workflow runs formatting checks, unit tests, and go vet on pushes and pull requests.
+
+See LICENSE for licensing terms.
