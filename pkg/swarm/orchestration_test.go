@@ -1,6 +1,7 @@
 package swarm
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 func TestRegisterAndPruneStaleAgent(t *testing.T) {
 	registry := NewSwarmRegistry(5 * time.Millisecond)
 	registry.RegisterOrUpdateAgent(edge.TelemetryData{AgentID: "agent-test", Timestamp: time.Now()})
-	if err := registry.CoordinateTask(t.Context(), "test-task"); err != nil {
+	if err := registry.CoordinateTask(context.Background(), "test-task"); err != nil {
 		t.Fatalf("expected active agent to accept task: %v", err)
 	}
 	time.Sleep(10 * time.Millisecond)
