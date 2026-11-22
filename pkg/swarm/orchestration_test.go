@@ -19,7 +19,7 @@ func TestRegisterAndPruneStaleAgent(t *testing.T) {
 	if len(dropped) != 1 || dropped[0] != "agent-test" {
 		t.Fatalf("unexpected pruned agents: %v", dropped)
 	}
-	if err := registry.CoordinateTask(t.Context(), "test-task"); err == nil {
+	if err := registry.CoordinateTask(context.Background(), "test-task"); err == nil {
 		t.Fatal("expected task routing to fail with no active agents")
 	}
 }
