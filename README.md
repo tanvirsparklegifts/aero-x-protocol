@@ -25,7 +25,7 @@ AERO-X is an exploratory Go simulation of three cooperating software components:
     cmd/agent/             simulation entry point
     pkg/edge/              telemetry state
     pkg/swarm/             agent registry and heartbeat handling
-    pkg/pkg/nexus/         in-memory priority queue
+    pkg/nexus/             in-memory priority queue
     proto/telemetry.proto  protocol schema draft
     docs/                  architecture assets
 
