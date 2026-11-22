@@ -8,7 +8,7 @@ AERO-X is an exploratory Go simulation of three cooperating software components:
 
 - pkg/edge: mutex-protected telemetry state and snapshot reads.
 - pkg/swarm: in-memory agent registration, heartbeat timestamps, stale-agent pruning, and task-routing checks.
-- pkg/pkg/nexus: in-memory queues that process MissionCritical/Reliable packets before BestEffort packets.
+- pkg/nexus: in-memory queues that process MissionCritical/Reliable packets before BestEffort packets.
 - cmd/agent: a short local simulation wiring the components together.
 
 ## Requirements
@@ -35,6 +35,6 @@ This repository currently demonstrates an in-process simulation. It does not imp
 
 ## Engineering workflow
 
-Pull requests should include focused tests and explain behavior changes. The GitHub Actions workflow runs formatting checks, unit tests, and go vet on pushes and pull requests.
+Pull requests should include focused tests and explain behavior changes. The GitHub Actions workflow runs unit tests and go vet on pushes and pull requests.
 
 See LICENSE for licensing terms.
