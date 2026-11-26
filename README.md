@@ -1,8 +1,8 @@
 # AERO-X Protocol
 
-[![Go CI](https://github.com/tanvirsparklegifts/aero-x-protocol/actions/workflows/go-ci.yml/badge.svg)](https://github.com/tanvirsparklegifts/aero-x-protocol/actions/workflows/ci.yml)
+[![Go CI](https://github.com/tanvirsparklegifts/aero-x-protocol/actions/workflows/go-ci.yml/badge.svg)](https://github.com/tanvirsparklegifts/aero-x-protocol/actions/workflows/go-ci.yml)
 
-**Autonomous Aerospace & Multi-Vehicle Orchestration Engine — architecture prototype**
+**Edge Telemetry & Agent Orchestration Simulation — architecture prototype**
 
 AERO-X is an exploratory Go simulation of three cooperating software components: edge telemetry state, a heartbeat-based agent registry, and a priority-aware in-memory message queue. It is not flight-control software and has not been validated for real aerospace or safety-critical deployment.
 
