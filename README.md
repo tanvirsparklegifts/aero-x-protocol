@@ -1,5 +1,7 @@
 # AERO-X Protocol
 
+[![Go CI](https://github.com/tanvirsparklegifts/aero-x-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/tanvirsparklegifts/aero-x-protocol/actions/workflows/ci.yml)
+
 **Autonomous Aerospace & Multi-Vehicle Orchestration Engine — architecture prototype**
 
 AERO-X is an exploratory Go simulation of three cooperating software components: edge telemetry state, a heartbeat-based agent registry, and a priority-aware in-memory message queue. It is not flight-control software and has not been validated for real aerospace or safety-critical deployment.
@@ -29,12 +31,14 @@ AERO-X is an exploratory Go simulation of three cooperating software components:
     proto/telemetry.proto  protocol schema draft
     docs/                  architecture assets
 
+See [docs/architecture.md](docs/architecture.md) for the component model and verification roadmap.
+
 ## Scope and limitations
 
 This repository currently demonstrates an in-process simulation. It does not implement real aircraft interfaces, distributed networking, protobuf code generation, durable messaging, real-time guarantees, or flight-certified safety controls. The queue is in-memory and the latency values printed by the demo are observations from a local simulation, not a verified latency SLO.
 
 ## Engineering workflow
 
-Pull requests should include focused tests and explain behavior changes. The GitHub Actions workflow runs unit tests and go vet on pushes and pull requests.
+Pull requests should include focused tests and explain behavior changes. GitHub Actions runs unit tests, `go vet`, and a build on pushes and pull requests.
 
 See LICENSE for licensing terms.
