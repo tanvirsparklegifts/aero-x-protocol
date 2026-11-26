@@ -9,7 +9,6 @@ import (
 	"aero-x-protocol/pkg/edge"
 )
 
-// QoSPriority defines transport reliability levels
 type QoSPriority int
 
 const (
@@ -18,7 +17,8 @@ const (
 	MissionCritical
 )
 
-// DataPacket represents an encapsulated message within Nexus Data Fabric
+const defaultQueueCapacity = 1024
+
 type DataPacket struct {
 	Header    string
 	Payload   edge.TelemetryData
@@ -26,56 +26,85 @@ type DataPacket struct {
 	Timestamp time.Time
 }
 
-// NexusFabric manages QoS-prioritized message queues across swarm nodes
+// NexusFabric is an in-memory, bounded, priority-aware queue for simulation.
 type NexusFabric struct {
 	mu           sync.Mutex
 	highPriority []DataPacket
 	lowPriority  []DataPacket
+	maxQueueSize int
 }
 
 func NewNexusFabric() *NexusFabric {
+	return NewNexusFabricWithCapacity(defaultQueueCapacity)
+}
+
+// NewNexusFabricWithCapacity creates a queue with a fixed total capacity.
+func NewNexusFabricWithCapacity(capacity int) *NexusFabric {
+	if capacity < 1 {
+		capacity = defaultQueueCapacity
+	}
 	return &NexusFabric{
 		highPriority: make([]DataPacket, 0),
 		lowPriority:  make([]DataPacket, 0),
+		maxQueueSize: capacity,
 	}
 }
 
-// Publish enqueues data packets based on QoS priority constraints
-func (n *NexusFabric) Publish(packet DataPacket) {
+// Publish returns false when the bounded queue is full.
+func (n *NexusFabric) Publish(packet DataPacket) bool {
 	n.mu.Lock()
 	defer n.mu.Unlock()
 
+	if len(n.highPriority)+len(n.lowPriority) >= n.maxQueueSize {
+		return false
+	}
 	if packet.Priority == MissionCritical || packet.Priority == Reliable {
 		n.highPriority = append(n.highPriority, packet)
-		fmt.Printf("[NEXUS DATA FABRIC] 🚨 HIGH PRIORITY Packet Queued from %s | QoS Level: Mission Critical\n", packet.Payload.AgentID)
+		fmt.Printf("[NEXUS DATA FABRIC] HIGH PRIORITY packet queued from %s\n", packet.Payload.AgentID)
 	} else {
 		n.lowPriority = append(n.lowPriority, packet)
-		fmt.Printf("[NEXUS DATA FABRIC] ℹ️ Standard Packet Queued from %s | QoS Level: Best Effort\n", packet.Payload.AgentID)
+		fmt.Printf("[NEXUS DATA FABRIC] Best-effort packet queued from %s\n", packet.Payload.AgentID)
 	}
+	return true
 }
 
-// ProcessQueue simulates deterministic, priority-aware message transport
-func (n *NexusFabric) ProcessQueue(ctx context.Context) int {
+// popNext removes one packet, always preferring the high-priority FIFO.
+func (n *NexusFabric) popNext() (DataPacket, bool) {
 	n.mu.Lock()
 	defer n.mu.Unlock()
 
-	processed := 0
-
-	// Process high-priority critical traffic first
-	for len(n.highPriority) > 0 {
-		pkt := n.highPriority[0]
+	if len(n.highPriority) > 0 {
+		packet := n.highPriority[0]
+		n.highPriority[0] = DataPacket{}
 		n.highPriority = n.highPriority[1:]
-		processed++
-		fmt.Printf("[NEXUS TRANSPORT] ⚡ Dispatched Critical QoS Telemetry for %s in %v\n", pkt.Payload.AgentID, time.Since(pkt.Timestamp))
+		return packet, true
 	}
-
-	// Process remaining standard traffic
-	for len(n.lowPriority) > 0 {
-		pkt := n.lowPriority[0]
+	if len(n.lowPriority) > 0 {
+		packet := n.lowPriority[0]
+		n.lowPriority[0] = DataPacket{}
 		n.lowPriority = n.lowPriority[1:]
-		processed++
-		fmt.Printf("[NEXUS TRANSPORT] 📦 Dispatched Standard Telemetry for %s\n", pkt.Payload.AgentID)
+		return packet, true
 	}
+	return DataPacket{}, false
+}
 
-	return processed
+// ProcessQueue drains packets until empty or ctx is cancelled. Unprocessed
+// packets remain queued when cancellation occurs.
+func (n *NexusFabric) ProcessQueue(ctx context.Context) int {
+	processed := 0
+	for {
+		if err := ctx.Err(); err != nil {
+			return processed
+		}
+		packet, ok := n.popNext()
+		if !ok {
+			return processed
+		}
+		processed++
+		if packet.Priority == MissionCritical || packet.Priority == Reliable {
+			fmt.Printf("[NEXUS TRANSPORT] Dispatched priority telemetry for %s in %v\n", packet.Payload.AgentID, time.Since(packet.Timestamp))
+		} else {
+			fmt.Printf("[NEXUS TRANSPORT] Dispatched best-effort telemetry for %s\n", packet.Payload.AgentID)
+		}
+	}
 }
