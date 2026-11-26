@@ -1,6 +1,6 @@
 # AERO-X Protocol
 
-[![Go CI](https://github.com/tanvirsparklegifts/aero-x-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/tanvirsparklegifts/aero-x-protocol/actions/workflows/ci.yml)
+[![Go CI](https://github.com/tanvirsparklegifts/aero-x-protocol/actions/workflows/go-ci.yml/badge.svg)](https://github.com/tanvirsparklegifts/aero-x-protocol/actions/workflows/ci.yml)
 
 **Autonomous Aerospace & Multi-Vehicle Orchestration Engine — architecture prototype**
 
